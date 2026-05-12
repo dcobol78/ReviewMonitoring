@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -12,12 +12,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Extensions\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReviewMonitoring.Core\ReviewMonitoring.Core.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Domain\ReviewMonitoring.Domain.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Infrastructure.Postgres\ReviewMonitoring.Infrastructure.Postgres.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Infrastructure.Redis\ReviewMonitoring.Infrastructure.Redis.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Ingestion\ReviewMonitoring.Ingestion.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Shared\ReviewMonitoring.Shared.csproj" />
   </ItemGroup>
 
 </Project>

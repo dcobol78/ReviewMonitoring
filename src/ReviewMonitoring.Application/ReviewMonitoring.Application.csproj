@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReviewMonitoring.Application\ReviewMonitoring.Application.csproj" />
+    <PackageReference Include="MediatR" Version="14.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
+    <ProjectReference Include="..\ReviewMonitoring.Domain\ReviewMonitoring.Domain.csproj" />
   </ItemGroup>
 
 </Project>
