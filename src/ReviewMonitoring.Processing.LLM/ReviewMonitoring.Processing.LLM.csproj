@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ReviewMonitoring.Application\ReviewMonitoring.Application.csproj" />
+    <Folder Include="Contracts\" />
   </ItemGroup>
 
 </Project>

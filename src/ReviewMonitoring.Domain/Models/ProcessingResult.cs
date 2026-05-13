@@ -1,9 +1,23 @@
 ﻿namespace ReviewMonitoring.Domain.Models;
 
+/// <summary>
+/// Финальный результат обработки
+/// </summary>
 public class ProcessingResult
 {
-    public required ProductInfo Product { get; set; }
-    public required AggregateStats Aggregate { get; set; }
+    /// <summary>
+    /// Данные о товаре в целом
+    /// </summary>
+    public ProductInfo Product { get; set; } = new();
+
+    /// <summary>
+    /// Статистические данные товара
+    /// </summary>
+    public AggregateStats? Aggregate { get; set; }
+
+    /// <summary>
+    /// Данные каждого источника
+    /// </summary>
     public List<SourceResult> Sources { get; set; } = [];
 }
 

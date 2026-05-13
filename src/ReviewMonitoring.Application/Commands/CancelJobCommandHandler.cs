@@ -28,8 +28,7 @@ public class CancelJobCommandHandler : IRequestHandler<CancelJobCommand, bool>
             or JobStatus.Cancelled)
             return false;
 
-        job.Status = JobStatus.Cancelled;
-        job.CompletedAt = DateTime.UtcNow;
+        job.Cancel();
 
         await _repository.SaveAsync(job);
         await _cache.DeleteAsync(request.JobId);

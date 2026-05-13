@@ -3,8 +3,9 @@ using ReviewMonitoring.Domain.Models;
 
 namespace ReviewMonitoring.Application.Models;
 
-public class ProcessingRequest
+public class ProcessingSingleRequest
 {
-    public IReadOnlyCollection<Review> Reviews { get; set; }
+    public required IReadOnlyCollection<Review> Reviews { get; set; }
+    public required string SourceName { get; set; }
     public ProcessingMode Mode { get; set; }
 }

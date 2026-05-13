@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 namespace ReviewMonitoring.Domain.Enums;
 public enum JobStatus
 {
-    Pending,
-    Parsing,
-    Parsed,
-    Analyzing,
-    Completed,
-    PartiallyCompleted,
-    Failed,
-    Cancelled,
-    Paused        // Пока бесполезно, да и вообще наверное не надо, перезапустить анализ будет логичнее, не? Пусть пока будет.
+    Pending,            // Задача создана, но этап сбора еще не начат
+    Parsing,            // Сбор отзывов
+    Parsed,             // Отзывы собраны
+    Analyzing,          // Анализ отзывов
+    Completed,          // Задача завершена
+    PartiallyCompleted, // Задача завершена частично
+    Failed,             // Задача не завершена
+    Cancelled,          // Задача отменена
+    Paused              // Пока бесполезно, да и вообще наверное не надо, перезапустить задачу будет логичнее, не? Пусть пока будет.
 }

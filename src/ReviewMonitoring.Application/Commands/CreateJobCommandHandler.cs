@@ -2,13 +2,10 @@
 using ReviewMonitoring.Application.Interfaces;
 using ReviewMonitoring.Application.Models;
 using ReviewMonitoring.Domain.Domain;
-using ReviewMonitoring.Domain.Enums;
 using ReviewMonitoring.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+//TODO: Добавить обработку ошибок и сами ошибки тоже можжно добавить впринципе
+//TODO: Logs
 
 namespace ReviewMonitoring.Application.Commands;
 public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
@@ -34,15 +31,7 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
     {
         var availableProviders = _ingestion.GetEnabledProviders();
 
-        var job = new Job
-        {
-            Id = Guid.NewGuid(),
-            Query = request.query,
-            Mode = request.mode,
-            Status = JobStatus.Pending,
-            CreatedAt = DateTime.UtcNow,
-            SourceStatuses = availableProviders.ToDictionary(p => p, p => SourceStatus.Pending)
-        };
+        var job = Job.Create(request.query, request.mode, availableProviders);
         
         await _cache.SetAsync(job);
 
@@ -54,17 +43,23 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
     //Возможно стоит сделать отдельным воркером
     private async Task ProcessJobAsync(Job job, CancellationToken ct)
     {
-        job.Status = JobStatus.Parsing;
+        job.StartParsing();
         await _cache.SetAsync(job);
 
         var allReviews = new List<Review>();
 
-        var progress = new Progress<IngestionProgress>(async p =>
+        var progress = new Progress<IngestionProgress>(async source =>
         {
             // обновляем статус источника в Job
-            job.SourceStatuses[p.SourceName] = p.Status;
-            job.ReviewsCollected += p.ReviewsCollected;
-            allReviews.AddRange(p.Reviews);
+            job.AddCollectedReviews(source.ReviewsCollected);
+
+            var singleResult = await _processing.ProcessSingleAsync(
+                new ProcessingSingleRequest { Mode = job.Mode, Reviews = source.Reviews, SourceName = source.SourceName},
+                ct);
+
+            job.AddSourceResult(singleResult);
+
+            allReviews.AddRange(source.Reviews);
 
             // клиент видит обновление через стриминг
             await _cache.SetAsync(job);
@@ -75,15 +70,14 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
             progress,
             ct);
 
-        job.Status = JobStatus.Analyzing;
+        job.StartAnalyzing();
         await _cache.SetAsync(job);
 
-        job.Result = await _processing.ProcessAsync(
-            new ProcessingRequest { Reviews = allReviews, Mode = job.Mode },
+        var result = await _processing.ProcessFinalAsync(
+            new ProcessingFinalRequest { Reviews = allReviews, Mode = job.Mode },
             ct);
 
-        job.Status = JobStatus.Completed;
-        job.CompletedAt = DateTime.UtcNow;
+        job.Complete(result);
 
         await _repository.SaveAsync(job);
         await _cache.DeleteAsync(job.Id);

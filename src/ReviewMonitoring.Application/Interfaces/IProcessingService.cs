@@ -5,6 +5,6 @@ namespace ReviewMonitoring.Application.Interfaces;
 
 public interface IProcessingService
 {
-    Task<ProcessingResult> ProcessSingleAsync(ProcessingRequest request, CancellationToken ct);
-    Task<ProcessingResult> ProcessFinalAsync(ProcessingRequest request, CancellationToken ct);
+    Task<SourceResult> ProcessSingleAsync(ProcessingSingleRequest request, CancellationToken ct);
+    Task<ProcessingResult> ProcessFinalAsync(ProcessingFinalRequest request, CancellationToken ct);
 }
