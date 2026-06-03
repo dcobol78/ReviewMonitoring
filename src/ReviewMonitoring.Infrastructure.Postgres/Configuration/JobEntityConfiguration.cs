@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ReviewMonitoring.Infrastructure.Postgres.Entities;
-using System.Text.Json;
 
 namespace ReviewMonitoring.Infrastructure.Postgres.Configuration;
 public class JobEntityConfiguration : IEntityTypeConfiguration<JobEntity>
@@ -14,6 +13,12 @@ public class JobEntityConfiguration : IEntityTypeConfiguration<JobEntity>
             .HasConversion<string>();
 
         builder.Property(x => x.Result)
+            .HasColumnType("jsonb");
+
+        builder.Property(x => x.SearchConfig)
+            .HasColumnType("jsonb");
+
+        builder.Property(x => x.SourceStatuses)
             .HasColumnType("jsonb");
     }
 }

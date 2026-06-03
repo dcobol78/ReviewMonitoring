@@ -4,7 +4,6 @@ using ReviewMonitoring.Domain.Enums;
 using ReviewMonitoring.Domain.Models;
 using ReviewMonitoring.Infrastructure.Postgres.Entities;
 using System.Text.Json;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace ReviewMonitoring.Infrastructure.Postgres.Repoistories;
 public class JobRepository : IJobRepository
@@ -35,6 +34,11 @@ public class JobRepository : IJobRepository
         if (job.Result is not null)
             result = JsonSerializer.Serialize(job.Result);
 
+        string config = JsonSerializer.Serialize(job.SearchConfig);
+
+        string sourceStatuses =
+        JsonSerializer.Serialize(job.SourceStatuses);
+
         return new JobEntity
         {
             Id = job.Id,
@@ -42,9 +46,11 @@ public class JobRepository : IJobRepository
             Mode = job.Mode.ToString(),
             Status = job.Status,
             CreatedAt = job.CreatedAt,
+            SearchConfig = config,
             CompletedAt = job.CompletedAt,
             ErrorMessage = job.ErrorMessage,
-            Result = result
+            Result = result,
+            SourceStatuses = sourceStatuses
         };
     }
 
@@ -54,17 +60,23 @@ public class JobRepository : IJobRepository
         if (entity.Result is not null)
             result = JsonSerializer.Deserialize<ProcessingResult>(entity.Result);
 
-        return new Job
-        {
-            Id = entity.Id,
-            Query = entity.Query,
-            Mode = Enum.Parse<ProcessingMode>(entity.Mode),
-            Status = entity.Status,
-            CreatedAt = entity.CreatedAt,
-            CompletedAt = entity.CompletedAt,
-            ErrorMessage = entity.ErrorMessage,
-            Result = result
-        };
-    }
+        var searchConfig = JsonSerializer.Deserialize<IngestionConfig>(entity.SearchConfig) ?? new IngestionConfig();
 
+        var sourceStatuses =
+        JsonSerializer.Deserialize<Dictionary<string, SourceStatus>>(
+            entity.SourceStatuses)
+        ?? [];
+
+        return Job.Restore(
+            id: entity.Id,
+            query: entity.Query,
+            mode: Enum.Parse<ProcessingMode>(entity.Mode),
+            status: entity.Status,
+            createdAt: entity.CreatedAt,
+            searchConfig: searchConfig,
+            completedAt: entity.CompletedAt,
+            errorMessage: entity.ErrorMessage,
+            result: result,
+            sourceStatuses: sourceStatuses);
+    }
 }

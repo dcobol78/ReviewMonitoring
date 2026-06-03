@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReviewMonitoring.Application.Interfaces;
-using ReviewMonitoring.Infrastructure.Postgres.Consts;
+using ReviewMonitoring.Infrastructure.Redis.Consts;
 using ReviewMonitoring.Infrastructure.Redis.Repositories;
 using StackExchange.Redis;
 
@@ -13,7 +13,7 @@ public static class RedisExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        string? redisConnection = configuration.GetConnectionString("Redis");
+        string? redisConnection = configuration.GetConnectionString(ConstsRedis.ConnectionStringKey);
         if (string.IsNullOrWhiteSpace(redisConnection))
         {
 #if DEBUG

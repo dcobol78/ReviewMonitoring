@@ -1,16 +1,24 @@
 ﻿using ReviewMonitoring.Domain.Enums;
 using ReviewMonitoring.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ReviewMonitoring.Application.Models;
 public class IngestionProgress
 {
-    public required string SourceName { get; set; }
+    public required string ProviderName { get; set; }
+    
+    public required string OriginalUrl { get; set; }
+
     public SourceStatus Status { get; set; }
-    public int ReviewsCollected { get; set; }
-    public List<Review> Reviews { get; set; } = [];
+
+    public required IReadOnlyList<ListingReviews> Listings { get; set; }
+    
+    public IReadOnlyList<Review> GetReviews()
+    {
+        return Listings.SelectMany(l => l.Reviews).ToList();
+    }
+    
+    public int ReviewsCollected => GetReviews().Count;
+    
+    public int ListingsCollected => Listings.Count;
+
 }

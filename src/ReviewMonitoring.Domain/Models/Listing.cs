@@ -10,7 +10,7 @@ public class Listing
     /// <summary>
     /// Ссылка на товар
     /// </summary>
-    public required string Url { get; set; }           // ссылка на конкретного продавца
+    public required string Url { get; set; }
 
     /// <summary>
     /// Имя продавца
@@ -43,9 +43,14 @@ public class Listing
     public List<string> ImageUrls { get; set; } = [];
 
     /// <summary>
-    /// Отзывы
+    /// Распределение рейтинга
     /// </summary>
-    public List<Review> Reviews { get; set; } = [];
+    public Dictionary<int, int> RatingDistribution { get; set; } = [];
+
+    /// <summary>
+    /// Анализ листинга
+    /// </summary>
+    public AnalysisSummary? Analysis { get; set; }
 
     /// <summary>
     /// Доп. метаданные

@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ReviewMonitoring.Infrastructure.Postgres.Consts;
+namespace ReviewMonitoring.Infrastructure.Redis.Consts;
 
 #if DEBUG
 
 /// <summary>
 /// Константы для дебага
 /// </summary>
-public static class ConstsRedisDebug
+internal static class ConstsRedisDebug
 {
     /// <summary>
     /// Строка соединения Redis

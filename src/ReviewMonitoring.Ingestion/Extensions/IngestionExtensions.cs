@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ReviewMonitoring.Application.Interfaces;
+using ReviewMonitoring.Ingestion.Consts;
 using ReviewMonitoring.Ingestion.Interfaces;
 using System.Reflection;
 
@@ -10,9 +11,13 @@ public static class IngestionExtensions
 {
     public static IServiceCollection AddIngestion(
     this IServiceCollection services,
-    IEnumerable<string> enabledAssemblies)
+    IConfiguration configuration)
     {
-        foreach (var assemblyName in enabledAssemblies)
+        var enabledProviders = configuration
+        .GetSection(ConstsIngestion.EnabledProvidersKey)
+        .Get<List<string>>() ?? [];
+
+        foreach (var assemblyName in enabledProviders)
         {
             var assembly = Assembly.Load(assemblyName);
 

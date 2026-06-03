@@ -3,7 +3,11 @@ using ReviewMonitoring.Shared;
 using ReviewMonitoring.Infrastructure.Postgres.Extensions;
 using ReviewMonitoring.Infrastructure.Redis.Extensions;
 using ReviewMonitoring.Ingestion.Extensions;
+using ReviewMonitoring.Ingestion.Browser.Extensions;
+using ReviewMonitoring.Ingestion.Http.Extensions;
+using ReviewMonitoring.Processing.Extensions;
 using ReviewMonitoring.Application.Extensions;
+using ReviewMonitoring.AI.Extensions;
 
 namespace ReviewMonitoring.API;
 
@@ -21,14 +25,17 @@ public class Program
         builder.Services.AddSwaggerGen();
 
         // Инфрсатруктура
-        builder.Services.AddPostgresInfrastructure(builder.Configuration);
-        builder.Services.AddRedisInfrastructure(builder.Configuration);
         builder.Services.AddApplication();
 
-        List<string> enabledProviders = builder.Configuration
-        .GetSection("Ingestion:EnabledProviders")
-        .Get<List<string>>() ?? [];
-        builder.Services.AddIngestion(enabledProviders);
+        builder.Services.AddPostgresInfrastructure(builder.Configuration);
+        builder.Services.AddRedisInfrastructure(builder.Configuration);
+
+        builder.Services.AddBrowserIngestion();
+        builder.Services.AddHttpIngestion();
+        builder.Services.AddIngestion(builder.Configuration);
+
+        builder.Services.AddAi(builder.Configuration);
+        builder.Services.AddProcessing();
 
         var app = builder.Build();
 

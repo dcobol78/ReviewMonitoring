@@ -12,15 +12,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Models\v1\" />
+    <Folder Include="Consts\" />
     <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ReviewMonitoring.AI\ReviewMonitoring.AI.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Domain\ReviewMonitoring.Domain.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Infrastructure.Postgres\ReviewMonitoring.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Infrastructure.Redis\ReviewMonitoring.Infrastructure.Redis.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Ingestion.AliExpress\ReviewMonitoring.Ingestion.AliExpress.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Ingestion.Browser\ReviewMonitoring.Ingestion.Browser.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Ingestion.Http\ReviewMonitoring.Ingestion.Http.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Ingestion.Ozon\ReviewMonitoring.Ingestion.Ozon.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Ingestion.Search\ReviewMonitoring.Ingestion.Search.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Ingestion.Wildberries\ReviewMonitoring.Ingestion.Wildberries.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Ingestion\ReviewMonitoring.Ingestion.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Processing\ReviewMonitoring.Processing.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Shared\ReviewMonitoring.Shared.csproj" />
   </ItemGroup>
 
+	<Target Name="InstallPlaywright" AfterTargets="CopyFilesToOutputDirectory">
+		<Exec Command="powershell -ExecutionPolicy Bypass -File &quot;$(TargetDir)playwright.ps1&quot; install chromium" />
+	</Target>
+	
 </Project>

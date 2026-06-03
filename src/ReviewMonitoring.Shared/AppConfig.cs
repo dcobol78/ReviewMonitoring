@@ -3,7 +3,6 @@
 /// <summary>
 /// Класс для хранения конфигурации приложения
 /// </summary>
-public static class AppConfig
+public static partial class AppConfig
 {
-
 }

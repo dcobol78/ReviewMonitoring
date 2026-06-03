@@ -7,7 +7,6 @@ namespace ReviewMonitoring.Domain.Models;
 /// </summary>
 public class Review
 {
-    // как будто абсолютно бесполезно, он нигде харниться не будет, кроме как в контексте сбора и анализа
     /// <summary>
     /// ID отзыва
     /// </summary>
@@ -28,19 +27,16 @@ public class Review
     /// </summary>
     public int Rating { get; set; }
 
-    // может пригодится, если мы будем определять вес и более новые отзывы будут ценнее, но это уже фантастика
     /// <summary>
     /// Дата
     /// </summary>
     public DateTime Date { get; set; }
 
-    // как будто бы тоже бесполезно
     /// <summary>
     /// Имя автора отзыва
     /// </summary>
     public string? AuthorName { get; set; }
 
-    // тоже бесполезно, без веса
     /// <summary>
     /// Количество лайков на отзыве
     /// </summary>

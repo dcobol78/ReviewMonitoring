@@ -44,10 +44,5 @@ public class AggregateStats
     /// <summary>
     /// Лучший вариант для покупки
     /// </summary>
-    public ListingResult? BestSeller { get; set; }
-
-    /// <summary>
-    /// Результат анализа через LLM
-    /// </summary>
-    public AnalysisSummary? Analysis { get; set; }
+    public Listing? BestSeller { get; set; }
 }

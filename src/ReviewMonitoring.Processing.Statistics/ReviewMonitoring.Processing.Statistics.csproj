@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ReviewMonitoring.Domain\ReviewMonitoring.Domain.csproj" />
+    <ProjectReference Include="..\ReviewMonitoring.Processing\ReviewMonitoring.Processing.csproj" />
+  </ItemGroup>
+
 </Project>

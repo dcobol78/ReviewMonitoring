@@ -1,5 +1,6 @@
 ﻿using ReviewMonitoring.Domain.Enums;
 using ReviewMonitoring.Domain.Models;
+using System.Text.Json.Serialization;
 
 namespace ReviewMonitoring.Domain.Domain;
 
@@ -8,6 +9,9 @@ namespace ReviewMonitoring.Domain.Domain;
 /// </summary>
 public class Job
 {
+    [JsonConstructor]
+    private Job() { }
+
     //Можно и в int перегнать впринципе
     /// <summary>
     /// ID работы
@@ -26,6 +30,11 @@ public class Job
     public required ProcessingMode Mode { get; set; }
 
     /// <summary>
+    /// Конфигурация поиска
+    /// </summary>
+    public IngestionConfig SearchConfig { get; set; }
+
+    /// <summary>
     /// Статус работы
     /// </summary>
     public JobStatus Status { get; set; } = JobStatus.Pending;
@@ -38,6 +47,12 @@ public class Job
     /// Обновляется каждый обработанный источник
     /// </summary>
     public int ReviewsCollected { get; set; }
+
+    /// <summary>
+    /// Сколько товаров собрано
+    /// Обновляется каждый обработанный источник
+    /// </summary>
+    public int ListingsCollected { get; set; }
 
     /// <summary>
     /// Результат обработки
@@ -65,7 +80,10 @@ public class Job
     public DateTime? LastPingAt { get; set; }
 
 
-    public static Job Create(string query, ProcessingMode mode, IReadOnlyList<string> providers)
+    public static Job Create(string query, 
+        ProcessingMode mode, 
+        IReadOnlyList<string> providers,
+        IngestionConfig? searchConfig = null)
     {
         return new Job
         {
@@ -74,9 +92,37 @@ public class Job
             Mode = mode,
             Status = JobStatus.Pending,
             CreatedAt = DateTime.UtcNow,
+            SearchConfig = searchConfig ?? new IngestionConfig(),
             SourceStatuses = providers.ToDictionary(
                 p => p,
                 p => SourceStatus.Pending)
+        };
+    }
+
+    public static Job Restore(
+        Guid id,
+        string query,
+        ProcessingMode mode,
+        JobStatus status,
+        DateTime createdAt,
+        IngestionConfig searchConfig,
+        DateTime? completedAt,
+        string? errorMessage,
+        ProcessingResult? result,
+        Dictionary<string, SourceStatus>? sourceStatuses = null)
+    {
+        return new Job
+        {
+            Id = id,
+            Query = query,
+            Mode = mode,
+            Status = status,
+            CreatedAt = createdAt,
+            SearchConfig = searchConfig,
+            CompletedAt = completedAt,
+            ErrorMessage = errorMessage,
+            Result = result,
+            SourceStatuses = sourceStatuses ?? []
         };
     }
 
@@ -110,33 +156,55 @@ public class Job
         Status = JobStatus.Analyzing;
     }
 
-    //TODO: Доделать
     public void AddSourceResult(SourceResult result)
     {
-
-        if (result == null)
+        if (result is null)
             return;
 
         Result ??= new ProcessingResult
         {
             Product = new ProductInfo(),
-            Aggregate = new AggregateStats()
         };
 
-        Result.Product.ProductUrls.Add(result.Url);
+        // Добавляем результат площадки
+        Result.Sources.Add(result);
+
+        // Обновляем ProductInfo из листингов площадки
+        foreach (var seller in result.Listings)
+        {
+            Result.Product.ProductUrls.Add(seller.Url);
+
+            if (!string.IsNullOrEmpty(seller.ProductTitle))
+                Result.Product.Titles[seller.Url] = seller.ProductTitle;
+
+            if (seller.ImageUrls.Count > 0)
+                Result.Product.ImageUrls[seller.Url] = seller.ImageUrls;
+        }
+
+        // Обновляем статус источника
+        SourceStatuses[result.Name] = SourceStatus.Completed;
     }
 
     //TODO: Сделать
     public void SetFinalProcessingResult(ProcessingResult result)
     {
-
-        if (result == null)
+        if (result is null)
             return;
+
+        // Сохраняем накопленный ProductInfo
+        result.Product = Result?.Product ?? new ProductInfo();
+
+        Result = result;
     }
 
     public void AddCollectedReviews(int count)
     {
         ReviewsCollected += count;
+    }
+
+    public void AddCollectedListings(int count)
+    {
+        ListingsCollected += count;
     }
 
     public void Ping()

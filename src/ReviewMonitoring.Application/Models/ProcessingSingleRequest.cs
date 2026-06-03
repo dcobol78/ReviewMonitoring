@@ -5,7 +5,7 @@ namespace ReviewMonitoring.Application.Models;
 
 public class ProcessingSingleRequest
 {
-    public required IReadOnlyCollection<Review> Reviews { get; set; }
-    public required string SourceName { get; set; }
-    public ProcessingMode Mode { get; set; }
+    public required IReadOnlyCollection<ListingReviews> Listings { get; set; }
+    public required string ProviderName { get; set; }
+    public required string OriginalUrl { get; set; }
 }

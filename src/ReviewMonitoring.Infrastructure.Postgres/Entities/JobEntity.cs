@@ -8,7 +8,9 @@ public class JobEntity
     public required string Mode { get; set; }
     public JobStatus Status { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public required string SearchConfig { get; set; }
     public DateTime? CompletedAt { get; set; }
     public string? ErrorMessage { get; set; }
     public string? Result { get; set; }
+    public string SourceStatuses { get; set; } = "{}";
 }

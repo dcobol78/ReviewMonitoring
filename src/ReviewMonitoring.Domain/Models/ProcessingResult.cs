@@ -19,5 +19,10 @@ public class ProcessingResult
     /// Данные каждого источника
     /// </summary>
     public List<SourceResult> Sources { get; set; } = [];
+
+    /// <summary>
+    /// Общий результат анализа
+    /// </summary>
+    public AnalysisSummary? Overall { get; set; }
 }
 

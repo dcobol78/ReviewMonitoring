@@ -6,7 +6,7 @@ namespace ReviewMonitoring.Application.Interfaces;
 public interface IIngestionService
 {
     Task<IngestionResult> IngestAsync(
-        IngestionRequest request,
+        AnalysisRequest request,
         IProgress<IngestionProgress>? progress,
         CancellationToken ct);
 

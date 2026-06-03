@@ -7,6 +7,8 @@ public class PostgresDbContext : DbContext
 {
     public DbSet<JobEntity> Jobs { get; set; }
 
+    public PostgresDbContext(DbContextOptions<PostgresDbContext> options) : base(options) { }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(PostgresDbContext).Assembly);

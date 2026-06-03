@@ -1,11 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReviewMonitoring.Application.Interfaces;
 
 namespace ReviewMonitoring.Processing.Extensions;
 public static class ProcessingExtension
 {
-
+    public static IServiceCollection AddProcessing(
+        this IServiceCollection services)
+    {
+        services.AddScoped<IProcessingService, ProcessingService>();
+        return services;
+    }
 }

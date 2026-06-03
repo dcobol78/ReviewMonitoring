@@ -9,6 +9,18 @@ namespace ReviewMonitoring.Application.Models;
 public class IngestionResult
 {
     public bool Success { get; set; }
-    public List<Review> Reviews { get; set; } = [];
+    public int TotalListingsProcessed { get; set; }
     public string? ErrorMessage { get; set; }
+
+    public static IngestionResult Ok(int totalListings = 0) => new()
+    {
+        Success = true,
+        TotalListingsProcessed = totalListings
+    };
+
+    public static IngestionResult Fail(string errorMessage = "") => new()
+    {
+        Success = false,
+        ErrorMessage = errorMessage
+    };
 }

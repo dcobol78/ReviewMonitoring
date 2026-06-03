@@ -16,7 +16,7 @@ public class SourceResult
     /// <summary>
     /// Ссылка на площадку
     /// </summary>
-    public required string Url { get; set; } // ссылка на саму площадку? а надо?
+    public required string Url { get; set; }
 
     /// <summary>
     /// Всего отзывов собрано
@@ -34,20 +34,15 @@ public class SourceResult
     public SourceStatus SourceStatus { get; set; }
 
     /// <summary>
-    /// Распределение рейтинга
+    /// Распределение рейтинга по всем найденным товарам на площадке
     /// </summary>
-    public Dictionary<int, int> RatingDistribution { get; set; } = []; // для количества оценок
+    public Dictionary<int, int> SourceRatingDistribution { get; set; } = [];
 
     /// <summary>
     /// По сути список товаров, с которых собирались отзывы, но так как товар зависит от продовца, назван продовцы
     /// </summary>
-    public List<ListingResult> Sellers { get; set; } = [];
+    public List<Listing> Listings { get; set; } = [];
 
-    /// <summary>
-    /// Результат прогона через LLM
-    /// </summary>
-    public AnalysisSummary? Analysis { get; set; } // пока никогда не будет исопльзоваться, нема логики анализа конкретной площадки через ллм может на 2 или 3 итерации добавлю, а может и шут с ней
-    
     /// <summary>
     /// Доп. метаданные
     /// </summary>

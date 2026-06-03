@@ -12,7 +12,7 @@ public static class PostgresExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        string? postgresConnection = configuration.GetConnectionString("Postgres");
+        string? postgresConnection = configuration.GetConnectionString(ConstsPostgres.ConnectionStringKey);
 
         if (string.IsNullOrWhiteSpace(postgresConnection))
         {

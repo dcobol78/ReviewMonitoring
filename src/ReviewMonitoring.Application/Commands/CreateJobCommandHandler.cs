@@ -1,8 +1,11 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using ReviewMonitoring.Application.Interfaces;
 using ReviewMonitoring.Application.Models;
+using ReviewMonitoring.Application.Services;
 using ReviewMonitoring.Domain.Domain;
 using ReviewMonitoring.Domain.Models;
+using System.Threading.Channels;
 
 //TODO: Добавить обработку ошибок и сами ошибки тоже можжно добавить впринципе
 //TODO: Logs
@@ -12,19 +15,20 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
 {
     private readonly IJobCacheRepository _cache;
     private readonly IIngestionService _ingestion;
-    private readonly IJobRepository _repository;
-    private readonly IProcessingService _processing;
+    private readonly ILogger<CreateJobCommandHandler> _log;
+    private readonly JobProcessor _processor;
 
 
-    public CreateJobCommandHandler(IJobCacheRepository cache, 
-        IIngestionService ingestion, 
-        IJobRepository repository, 
-        IProcessingService processing)
+    public CreateJobCommandHandler(
+        IJobCacheRepository cache,
+        IIngestionService ingestion,
+        JobProcessor processor,
+        ILogger<CreateJobCommandHandler> log)
     {
         _cache = cache;
         _ingestion = ingestion;
-        _repository = repository;
-        _processing = processing;
+        _processor = processor;
+        _log = log;
     }
 
     public async Task<Guid> Handle(CreateJobCommand request, CancellationToken ct)
@@ -35,51 +39,12 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
         
         await _cache.SetAsync(job);
 
-        _ = ProcessJobAsync(job, CancellationToken.None);
+        _log.LogInformation("Job {JobId} created for query {Query}", job.Id, job.Query);
+
+        _ = _processor.ProcessAsync(job, CancellationToken.None);
+
+        _log.LogInformation("Job {JobId} processing started", job.Id);
 
         return job.Id;
-    }
-
-    //Возможно стоит сделать отдельным воркером
-    private async Task ProcessJobAsync(Job job, CancellationToken ct)
-    {
-        job.StartParsing();
-        await _cache.SetAsync(job);
-
-        var allReviews = new List<Review>();
-
-        var progress = new Progress<IngestionProgress>(async source =>
-        {
-            // обновляем статус источника в Job
-            job.AddCollectedReviews(source.ReviewsCollected);
-
-            var singleResult = await _processing.ProcessSingleAsync(
-                new ProcessingSingleRequest { Mode = job.Mode, Reviews = source.Reviews, SourceName = source.SourceName},
-                ct);
-
-            job.AddSourceResult(singleResult);
-
-            allReviews.AddRange(source.Reviews);
-
-            // клиент видит обновление через стриминг
-            await _cache.SetAsync(job);
-        });
-
-        await _ingestion.IngestAsync(
-            new IngestionRequest { Query = job.Query },
-            progress,
-            ct);
-
-        job.StartAnalyzing();
-        await _cache.SetAsync(job);
-
-        var result = await _processing.ProcessFinalAsync(
-            new ProcessingFinalRequest { Reviews = allReviews, Mode = job.Mode },
-            ct);
-
-        job.Complete(result);
-
-        await _repository.SaveAsync(job);
-        await _cache.DeleteAsync(job.Id);
     }
 }
