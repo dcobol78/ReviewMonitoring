@@ -1,13 +1,15 @@
 
-using ReviewMonitoring.Shared;
+using ReviewMonitoring.AI.Extensions;
+using ReviewMonitoring.Application.Extensions;
+using ReviewMonitoring.Infrastructure.Postgres;
 using ReviewMonitoring.Infrastructure.Postgres.Extensions;
 using ReviewMonitoring.Infrastructure.Redis.Extensions;
-using ReviewMonitoring.Ingestion.Extensions;
 using ReviewMonitoring.Ingestion.Browser.Extensions;
+using ReviewMonitoring.Ingestion.Extensions;
 using ReviewMonitoring.Ingestion.Http.Extensions;
 using ReviewMonitoring.Processing.Extensions;
-using ReviewMonitoring.Application.Extensions;
-using ReviewMonitoring.AI.Extensions;
+using ReviewMonitoring.Shared;
+using ReviewMonitoring.Shared.Consts;
 
 namespace ReviewMonitoring.API;
 
@@ -39,6 +41,14 @@ public class Program
 
         var app = builder.Build();
 
+        //TODO: сделать static bool Demomode в сшаред и отуда тянуть шоб не парсить в bool постоянно из конфига
+        if (bool.TryParse(app.Configuration[ConstsShared.Keys.DemoMode], out var demo) && demo)
+        {
+            using var scope = app.Services.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<PostgresDbContext>();
+            db.Database.EnsureCreated();
+        }
+
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
@@ -58,32 +68,6 @@ public class Program
         {
             AppLog.LoggerFactory = loggerFactory;
         }
-
-        IConfigurationRoot config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-
-//Убрать позже если ненужно будет.
-#pragma warning disable CS0168 // Variable is declared but never used
-        string? configValStr;
-#pragma warning restore CS0168 // Variable is declared but never used
-
-#if !DEBUG
-        config_val_str = config.GetSection("ConnectionStrings")["Postgres"];
-        if (string.IsNullOrWhiteSpace(config_val_str))
-        {
-        throw new NullReferenceException("Не удалось считать параметр в appsettings.json ->ConnectionStrings:Postgres");
-        }
-        AppConfig.PostgresConnection = config_val_str;
-
-        config_val_str = config.GetSection("ConnectionStrings")["Redis"];
-        if (string.IsNullOrWhiteSpace(config_val_str))
-        {
-        throw new NullReferenceException("Не удалось считать параметр в appsettings.json ->ConnectionStrings:Redis");
-        }
-        AppConfig.Redis = config_val_str;
-#else
-        //AppConfig.PostgresConnection = ConstsDbDebug.DebugPostgresConnection;
-        //AppConfig.RedisConnection = ConstsDbDebug.DebugRedisConnection;
-#endif
 
         app.Run();
     }

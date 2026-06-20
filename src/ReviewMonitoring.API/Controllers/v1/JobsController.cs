@@ -30,6 +30,7 @@ namespace ReviewMonitoring.API.Controllers.v1
             return Ok(job);
         }
 
+        //TODO: сделать нормально, сейчас стрим заглушкой через поллинг кеша или бд в зависимости от завершенности работы
         // GET /api/v1/jobs/{id}/stream
         [HttpGet("{id}/stream")]
         public async Task StreamStatus(Guid id, CancellationToken ct)

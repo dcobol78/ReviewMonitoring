@@ -13,4 +13,8 @@ public class JobEntity
     public string? ErrorMessage { get; set; }
     public string? Result { get; set; }
     public string SourceStatuses { get; set; } = "{}";
+
+    public int ReviewsCollected { get; set; }
+    public int ListingsCollected { get; set; }
+
 }

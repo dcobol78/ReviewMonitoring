@@ -7,6 +7,7 @@ public class ConstsAi
 
     public static class Keys
     {
+        public const string DemoMode = "DemoMode";
         public const string Section = "Ai";
         public const string ApiKey = "Ai:ApiKey";
         public const string Model = "Ai:Model";

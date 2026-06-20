@@ -30,12 +30,5 @@ namespace ReviewMonitoring.API.Controllers.v1
 
             return Accepted(new { jobId });
         }
-
-        // GET /api/v1/analysis/search?q=Elden+Ring
-        [HttpGet("search")]
-        public async Task<IActionResult> Search([FromQuery] string q)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

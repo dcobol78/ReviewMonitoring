@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ReviewMonitoring.Infrastructure.Postgres.Configuration;
 using ReviewMonitoring.Infrastructure.Postgres.Entities;
 
 namespace ReviewMonitoring.Infrastructure.Postgres;
@@ -11,6 +12,6 @@ public class PostgresDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PostgresDbContext).Assembly);
+        modelBuilder.ApplyConfiguration(new JobEntityConfiguration(Database.IsNpgsql()));
     }
 }

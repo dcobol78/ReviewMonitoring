@@ -32,7 +32,7 @@ public class JobProcessor
             await cache.SetAsync(job);
 
             var allListings = new List<ListingReviews>();
-            var sourses = new List<SourceResult>();
+            var sources = new List<SourceResult>();
             var channel = Channel.CreateUnbounded<IngestionProgress>();
 
             var processingTask = Task.Run(async () =>
@@ -48,7 +48,7 @@ public class JobProcessor
                         }, ct);
 
                     //потенциально не обязательно
-                    sourses.Add(singleResult);
+                    sources.Add(singleResult);
 
                     job.AddSourceResult(singleResult);
                     allListings.AddRange(source.Listings);
@@ -61,7 +61,6 @@ public class JobProcessor
             var progress = new Progress<IngestionProgress>(source =>
                 channel.Writer.TryWrite(source));
 
-            //TODO: Передавать конфиг
             await ingestion.IngestAsync(
                 new AnalysisRequest 
                 { 
@@ -74,7 +73,6 @@ public class JobProcessor
 
             channel.Writer.Complete();
 
-            // теперь awaits — исключение не проглотится
             await processingTask;
 
             job.StartAnalyzing();
@@ -83,7 +81,7 @@ public class JobProcessor
             var result = await processing.ProcessFinalAsync(
                 new ProcessingFinalRequest
                 {
-                    Sources = sourses,
+                    Sources = sources,
                     ListingReviews = allListings,
                     Mode = job.Mode
                 }, ct);

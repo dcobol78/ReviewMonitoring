@@ -50,7 +50,9 @@ public class JobRepository : IJobRepository
             CompletedAt = job.CompletedAt,
             ErrorMessage = job.ErrorMessage,
             Result = result,
-            SourceStatuses = sourceStatuses
+            SourceStatuses = sourceStatuses,
+            ReviewsCollected = job.ReviewsCollected,
+            ListingsCollected = job.ListingsCollected
         };
     }
 
@@ -77,6 +79,8 @@ public class JobRepository : IJobRepository
             completedAt: entity.CompletedAt,
             errorMessage: entity.ErrorMessage,
             result: result,
+            reviewsCollected: entity.ReviewsCollected,
+            listingsCollected: entity.ListingsCollected,
             sourceStatuses: sourceStatuses);
     }
 }

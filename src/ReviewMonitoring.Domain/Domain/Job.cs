@@ -109,6 +109,8 @@ public class Job
         DateTime? completedAt,
         string? errorMessage,
         ProcessingResult? result,
+        int reviewsCollected = 0,
+        int listingsCollected = 0,
         Dictionary<string, SourceStatus>? sourceStatuses = null)
     {
         return new Job
@@ -122,7 +124,9 @@ public class Job
             CompletedAt = completedAt,
             ErrorMessage = errorMessage,
             Result = result,
-            SourceStatuses = sourceStatuses ?? []
+            ReviewsCollected = reviewsCollected,
+            ListingsCollected = listingsCollected,
+            SourceStatuses = sourceStatuses ?? [],
         };
     }
 

@@ -4,6 +4,8 @@ using ReviewMonitoring.AI.Client;
 using ReviewMonitoring.AI.Consts;
 using ReviewMonitoring.AI.Services;
 using ReviewMonitoring.Application.Interfaces;
+using ReviewMonitoring.Shared.Consts;
+using ReviewMonitoring.Shared.Extensions;
 
 namespace ReviewMonitoring.AI.Extensions;
 public static class AiExtensions
@@ -12,14 +14,17 @@ public static class AiExtensions
     this IServiceCollection services,
     IConfiguration configuration)
     {
-        var apiKey = configuration[ConstsAi.Keys.ApiKey];
+        if (configuration.IsDemoMode())
+        {
+            Console.WriteLine("[AI] Demo mode enabled — using mock implementations");
+            return AddMocks(services);
+        }
 
+        var apiKey = configuration[ConstsAi.Keys.ApiKey];
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             Console.WriteLine("[AI] API key not provided — using mock implementations");
-            services.AddScoped<IProductMatcher, MockProductMatcher>();
-            services.AddScoped<IReviewAnalyzer, MockReviewAnalyzer>();
-            return services;
+            return AddMocks(services);
         }
 
         Console.WriteLine($"[AI] Using model: {configuration[ConstsAi.Keys.Model] ?? ConstsAi.DefaultModel}");
@@ -40,5 +45,13 @@ public static class AiExtensions
         services.AddScoped<IReviewAnalyzer, ReviewAnalyzer>();
 
         return services;
+
+        static IServiceCollection AddMocks(IServiceCollection services)
+        {
+            Console.WriteLine("Using mock implementations");
+            services.AddScoped<IProductMatcher, MockProductMatcher>();
+            services.AddScoped<IReviewAnalyzer, MockReviewAnalyzer>();
+            return services;
+        }
     }
 }
