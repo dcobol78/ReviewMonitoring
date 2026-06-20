@@ -22,7 +22,6 @@
     <ProjectReference Include="..\ReviewMonitoring.Domain\ReviewMonitoring.Domain.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Infrastructure.Postgres\ReviewMonitoring.Infrastructure.Postgres.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Infrastructure.Redis\ReviewMonitoring.Infrastructure.Redis.csproj" />
-    <ProjectReference Include="..\ReviewMonitoring.Ingestion.AliExpress\ReviewMonitoring.Ingestion.AliExpress.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Ingestion.Browser\ReviewMonitoring.Ingestion.Browser.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Ingestion.Http\ReviewMonitoring.Ingestion.Http.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Ingestion.Ozon\ReviewMonitoring.Ingestion.Ozon.csproj" />
