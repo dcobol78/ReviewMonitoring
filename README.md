@@ -109,7 +109,7 @@ dotnet restore
 dotnet build
 
 # запуск API
-dotnet run --project src/ReviewMonitoring.Api
+dotnet run --project src/ReviewMonitoring.API
 ```
 
 Конфигурация (строки подключения к PostgreSQL и Redis, ключ доступа к OpenRouter, данные сессии площадок) задаётся через `appsettings` / User Secrets и не хранится в репозитории.
