@@ -12,12 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\v1\" />
-    <Folder Include="Consts\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ReviewMonitoring.AI\ReviewMonitoring.AI.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Domain\ReviewMonitoring.Domain.csproj" />
     <ProjectReference Include="..\ReviewMonitoring.Infrastructure.Postgres\ReviewMonitoring.Infrastructure.Postgres.csproj" />
